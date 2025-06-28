@@ -13,11 +13,23 @@ services:
 
   mongodb:
     image: mongo:8.0
+    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - mongodb_data:/data/db
+    healthcheck:
+      test: |
+        mongosh --quiet \
+        -u $${MONGO_INITDB_ROOT_USERNAME} \
+        -p $${MONGO_INITDB_ROOT_PASSWORD} \
+        --eval "db.runCommand('ping').ok" \
+        mongodb://localhost:27017/app_elec?authSource=admin
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 volumes:
   mongodb_data:
