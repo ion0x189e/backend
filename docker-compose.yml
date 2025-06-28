@@ -4,7 +4,7 @@ services:
   backend:
     build: ./
     environment:
-      - MONGO_URI=${MONGO_URI}
+      MONGO_URI: mongodb://root:example@mongodb:27017/app_elec?authSource=admin
     ports:
       - "3000:3000"
     depends_on:
@@ -18,11 +18,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - mongodb_data:/data/db
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh --quiet -u root -p example localhost:27017/test | grep 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 volumes:
   mongodb_data:
