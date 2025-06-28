@@ -2,9 +2,13 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build: ./
     environment:
+<<<<<<< HEAD
       - MONGO_URI=${MONGO_URI}  # Utilise une variable d'environnement externe
+=======
+      MONGO_URI: mongodb://root:example@mongodb:27017/app_elec?authSource=admin
+>>>>>>> 4d31b13c610c58e9c41dfb9102d431479ed87c67
     ports:
       - "3000:3000"
     depends_on:
