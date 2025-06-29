@@ -5,7 +5,7 @@ let db: Database;
 export async function connect() {
   const client = new MongoClient();
   await client.connect(Deno.env.get("MONGO_URI") || "mongodb://localhost:27017");
-  db = client.database("hono_news");
+  db = client.database("hono_app");
 }
 
 export function getDb(): Database {
