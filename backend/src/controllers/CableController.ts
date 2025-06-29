@@ -16,15 +16,38 @@ export const getCableById = async (id: string) => {
   }
 };
 
+export const getCableByReference = async (reference: string) => {
+  try {
+    return await cableCollection().findOne({ reference: reference });
+  } catch (e) {
+    return null;
+  }
+};
+
 export const createCable = async (cable: Omit<Cable, '_id'>) => {
   const id = await cableCollection().insertOne(cable as Cable);
   return { ...cable, _id: id };
 };
 
-export const updateCable = async (id: string, cable: Partial<Omit<Cable, '_id'>>) => {
+export const updateCable = async (query: { _id?: string, reference?: string }, cable: Partial<Omit<Cable, '_id'>>) => {
   try {
-    await cableCollection().updateOne({ _id: new ObjectId(id) }, { $set: cable });
-    return await getCableById(id);
+    let filter: { _id?: ObjectId, reference?: string } = {};
+    if (query._id) {
+      filter._id = new ObjectId(query._id);
+    } else if (query.reference) {
+      filter.reference = query.reference;
+    } else {
+      return null; // No valid identifier provided
+    }
+
+    const result = await cableCollection().updateOne(filter, { $set: cable });
+    if (result.matchedCount === 0) {
+      return null; // No cable found with the given identifier
+    }
+
+    // Fetch the updated cable
+    const updatedCable = await cableCollection().findOne(filter);
+    return updatedCable;
   } catch (e) {
     return null;
   }
