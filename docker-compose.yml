@@ -2,7 +2,11 @@ services:
   backend:
     build: ./backend
     environment:
-      - MONGO_URI=${MONGO_URI}  # Utilise une variable d'environnement externe
+      - MONGO_URI=${MONGO_URI}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
+    volumes:
+      - ./data:/data
     ports:
       - "3000:3000"
     depends_on:
@@ -16,18 +20,12 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
-      - mongodb_data:/data/db
+      - mongodb_data:/data/db      # <-- À AJOUTER
     healthcheck:
-      test: |
-        mongosh --quiet \
-        -u $${MONGO_INITDB_ROOT_USERNAME} \
-        -p $${MONGO_INITDB_ROOT_PASSWORD} \
-        --eval "db.runCommand('ping').ok" \
-        mongodb://localhost:27017/app_elec?authSource=admin
+      test: ["CMD", "pgrep", "mongod"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 20s
 
 volumes:
   mongodb_data:
