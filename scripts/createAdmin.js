@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 const createAdminUser = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('MongoDB connected for admin creation');
 
     const email = process.env.DEFAULT_ADMIN_EMAIL;
